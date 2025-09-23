@@ -1,2 +1,9 @@
-# gestion-de-collection
-site de gestion de collectionde jeux video, le but du projet est de crée un site web connecter a une base de donnée , projet BTS sio 
+💻 Gestion Website – Gestion de collection
+
+Ce projet vise a crée un Website de gestion de collection de jeux video, le but et de prouver ses compentence et imprésionner la galerie.
+👨‍🎓 Crée par 1 étudiant et son IA GPT.
+
+Developed by:
+
+    Vador634
+
