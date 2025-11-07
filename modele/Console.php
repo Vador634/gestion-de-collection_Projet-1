@@ -1,7 +1,16 @@
 <?php
+class Console {
+    private $idConsole;
+    private $nomConsole;
+    private $constructeur;
 
-/* 
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Scripting/EmptyPHP.php to edit this template
- */
+    public function __construct($idConsole, $nomConsole, $constructeur) {
+        $this->idConsole = $idConsole;
+        $this->nomConsole = $nomConsole;
+        $this->constructeur = $constructeur;
+    }
 
+    public function getIdConsole() { return $this->idConsole; }
+    public function getNomConsole() { return $this->nomConsole; }
+    public function getConstructeur() { return $this->constructeur; }
+}
