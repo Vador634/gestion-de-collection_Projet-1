@@ -1,6 +1,8 @@
+<?php
+$pageTitle = "Profil";
+?>
 <?php include_once __DIR__ . '/../partials/header.php'; ?>
 
-<title>Profile</title>
 <h2>Profil de l'utilisateur</h2>
 
 <p><strong>ID :</strong> <?= htmlspecialchars($utilisateur->getId()) ?></p>
@@ -11,8 +13,8 @@
 
 <!-- Boutons -->
 <div style="margin-top:20px;">
-    <a href="/~kcarasco/Gestion_de_collection/Index.php" class="btn">Retour à l'accueil</a>
-    <a href="../Controleur/UtilisateurController.php?action=logout" class="btn" style="margin-left:10px;">Déconnexion</a>
+    <a href="<?= url('Index.php') ?>" class="btn">Retour à l'accueil</a>
+    <a href="<?= url('Index.php', ['action' => 'logout']) ?>" class="btn" style="margin-left:10px;">Déconnexion</a>
 </div>
 
 <?php include_once __DIR__ . '/../partials/footer.php'; ?>

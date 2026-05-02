@@ -1,6 +1,7 @@
-  <hr>
+    </main>
     <footer>
-        <p>Projet Gestion de Collection - Kilian Carasco 2025</p>
+        <hr>
+        <p>&copy; <?= date('Y') ?> Gestion des collections</p>
     </footer>
 </body>
 </html>

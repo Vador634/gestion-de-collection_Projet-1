@@ -1,9 +1,9 @@
 <?php
 function connexionPDO() {
-    $login = "carascok";   
-    $mdp = "08092006";     
-    $bd = "GestionDeCollection";     
-    $serveur = "192.168.20.15";
+    $login = "root";   
+    $mdp = "";     
+    $bd = "gestion_de_collection";     
+    $serveur = "127.0.0.1";
 
     try {
         $conn = new PDO(

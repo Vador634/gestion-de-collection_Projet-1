@@ -1,10 +1,8 @@
 <?php
-require_once __DIR__ . "/../modele/GenreDAO.php";
-
 class GenreController {
     public function lister() {
         $genres = GenreDAO::getAll();
-        include __DIR__ . "/../vue/genre/liste.php";
+        include __DIR__ . "/../vue/genre/Liste.php";
     }
 
     public function details($id) {
@@ -14,7 +12,7 @@ class GenreController {
             echo "Genre introuvable.";
             exit;
         }
-        include __DIR__ . "/../vue/genre/details.php";
+        include __DIR__ . "/../vue/genre/Details.php";
     }
 
     public function ajouter() {
@@ -23,15 +21,15 @@ class GenreController {
             
             if ($nomGenre === '') {
                 $erreur = "Le nom du genre est obligatoire.";
-                include __DIR__ . "/../vue/genre/ajouter.php";
+                include __DIR__ . "/../vue/genre/Ajouter.php";
                 return;
             }
             
             GenreDAO::insert($nomGenre);
-            header("Location: Index.php?action=listerGenres");
+            header("Location: " . url('Index.php', ['action' => 'listerGenres']));
             exit;
         }
-        include __DIR__ . "/../vue/genre/ajouter.php";
+        include __DIR__ . "/../vue/genre/Ajouter.php";
     }
 
     public function modifier($id) {
@@ -45,15 +43,15 @@ class GenreController {
             $nomGenre = $_POST["nomGenre"] ?? '';
             
             GenreDAO::update($id, $nomGenre);
-            header("Location: Index.php?action=detailsGenre&id=" . $id);
+            header("Location: " . url('Index.php', ['action' => 'detailsGenre', 'id' => $id]));
             exit;
         }
-        include __DIR__ . "/../vue/genre/modifier.php";
+        include __DIR__ . "/../vue/genre/Modifier.php";
     }
 
     public function supprimer($id) {
         GenreDAO::delete($id);
-        header("Location: Index.php?action=listerGenres");
+        header("Location: " . url('Index.php', ['action' => 'listerGenres']));
         exit;
     }
 }

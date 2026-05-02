@@ -1,8 +1,4 @@
 <?php
-require_once __DIR__ . '/../modele/UtilisateurDAO.php';
-require_once __DIR__ . '/../modele/Utilisateur.php';
-require_once __DIR__ . '/../config/Database.php';
-
 class UtilisateurController {
     private $dao;
     
@@ -40,8 +36,8 @@ class UtilisateurController {
                 'pseudo' => $utilisateur->getPseudo(),
                 'email' => $utilisateur->getEmail()
             ];
-            // ✅ Redirection vers la racine (Index.php est à la racine)
-            header('Location: /~kcarasco/Gestion_de_collection/Index.php');
+            // Redirection vers la racine
+            header('Location: ' . url('Index.php'));
             exit;
         } else {
             $erreur = "Email ou mot de passe incorrect.";
@@ -83,8 +79,8 @@ class UtilisateurController {
                 'pseudo' => $pseudo,
                 'email' => $email
             ];
-            // ✅ Redirection vers la racine
-            header('Location: /~kcarasco/Gestion_de_collection/Index.php');
+            // Redirection vers la racine
+            header('Location: ' . url('Index.php'));
             exit;
         } else {
             $erreur = "Erreur lors de l'inscription. Veuillez réessayer.";
@@ -98,8 +94,8 @@ class UtilisateurController {
     public function logout() {
         session_unset();
         session_destroy();
-        // ✅ Redirection vers la racine
-        header('Location: /~kcarasco/Gestion_de_collection/Index.php');
+        // Redirection vers la racine
+        header('Location: ' . url('Index.php'));
         exit;
     }
     
@@ -108,7 +104,7 @@ class UtilisateurController {
      */
     public function profil() {
         if (!isset($_SESSION['utilisateur'])) {
-            header('Location: /~kcarasco/Gestion_de_collection/Index.php?action=login');
+            header('Location: ' . url('Index.php', ['action' => 'login']));
             exit;
         }
         

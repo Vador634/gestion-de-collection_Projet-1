@@ -5,13 +5,13 @@ require_once __DIR__ . "/Genre.php";
 class GenreDAO {
     public static function getAll() {
         $conn = connexionPDO();
-        $sql = "SELECT * FROM Genre ORDER BY nomGenre";
+        $sql = "SELECT * FROM Genre ORDER BY libelleGenre";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
         $res = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $res[] = new Genre($row["idGenre"], $row["nomGenre"]);
+            $res[] = new Genre($row["idGenre"], $row["libelleGenre"]);
         }
         return $res;
     }
@@ -24,14 +24,14 @@ class GenreDAO {
         $stmt->execute();
 
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Genre($row["idGenre"], $row["nomGenre"]);
+            return new Genre($row["idGenre"], $row["libelleGenre"]);
         }
         return null;
     }
 
     public static function insert($nomGenre) {
         $conn = connexionPDO();
-        $sql = "INSERT INTO Genre(nomGenre) VALUES (:nomGenre)";
+        $sql = "INSERT INTO Genre(libelleGenre) VALUES (:nomGenre)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":nomGenre", $nomGenre, PDO::PARAM_STR);
         $ok = $stmt->execute();
@@ -41,7 +41,7 @@ class GenreDAO {
 
     public static function update($idGenre, $nomGenre) {
         $conn = connexionPDO();
-        $sql = "UPDATE Genre SET nomGenre = :nomGenre WHERE idGenre = :id";
+        $sql = "UPDATE Genre SET libelleGenre = :nomGenre WHERE idGenre = :id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id", $idGenre, PDO::PARAM_INT);
         $stmt->bindValue(":nomGenre", $nomGenre, PDO::PARAM_STR);

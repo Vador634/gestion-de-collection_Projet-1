@@ -11,7 +11,7 @@ class ConsoleDAO {
 
         $res = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $res[] = new Console($row["idConsole"], $row["nomConsole"], $row["constructeur"]);
+            $res[] = new Console($row["idConsole"], $row["nomConsole"], $row["fabricant"]);
         }
         return $res;
     }
@@ -24,29 +24,29 @@ class ConsoleDAO {
         $stmt->execute();
 
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Console($row["idConsole"], $row["nomConsole"], $row["constructeur"]);
+            return new Console($row["idConsole"], $row["nomConsole"], $row["fabricant"]);
         }
         return null;
     }
 
-    public static function insert($nomConsole, $constructeur) {
+    public static function insert($nomConsole, $fabricant) {
         $conn = connexionPDO();
-        $sql = "INSERT INTO Console(nomConsole, constructeur) VALUES (:nomConsole, :constructeur)";
+        $sql = "INSERT INTO Console(nomConsole, fabricant) VALUES (:nomConsole, :fabricant)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":nomConsole", $nomConsole, PDO::PARAM_STR);
-        $stmt->bindValue(":constructeur", $constructeur, PDO::PARAM_STR);
+        $stmt->bindValue(":fabricant", $fabricant, PDO::PARAM_STR);
         $ok = $stmt->execute();
         if ($ok) return $conn->lastInsertId();
         return false;
     }
 
-    public static function update($idConsole, $nomConsole, $constructeur) {
+    public static function update($idConsole, $nomConsole, $fabricant) {
         $conn = connexionPDO();
-        $sql = "UPDATE Console SET nomConsole = :nomConsole, constructeur = :constructeur WHERE idConsole = :id";
+        $sql = "UPDATE Console SET nomConsole = :nomConsole, fabricant = :fabricant WHERE idConsole = :id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id", $idConsole, PDO::PARAM_INT);
         $stmt->bindValue(":nomConsole", $nomConsole, PDO::PARAM_STR);
-        $stmt->bindValue(":constructeur", $constructeur, PDO::PARAM_STR);
+        $stmt->bindValue(":fabricant", $fabricant, PDO::PARAM_STR);
         return $stmt->execute();
     }
 

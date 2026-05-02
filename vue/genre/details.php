@@ -1,4 +1,5 @@
-<?php include("vue/partials/header.php"); ?>
+<?php include __DIR__ . "/../partials/header.php"; ?>
+
 <h1>Détails du Genre</h1>
 
 <?php if ($genre): ?>
@@ -7,5 +8,6 @@
     <p>Genre introuvable.</p>
 <?php endif; ?>
 
-<a href="index.php?action=listerGenres">← Retour à la liste</a>
-<?php include("vue/partials/footer.php"); ?>
+<a href="<?= url('Index.php', ['action' => 'listerGenres']) ?>">← Retour à la liste</a>
+
+<?php include __DIR__ . "/../partials/footer.php"; ?>

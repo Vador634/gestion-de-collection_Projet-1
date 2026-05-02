@@ -1,10 +1,8 @@
 <?php
-require_once __DIR__ . "/../modele/ConsoleDAO.php";
-
 class ConsoleController {
     public function lister() {
         $consoles = ConsoleDAO::getAll();
-        include __DIR__ . "/../vue/console/liste.php";
+        include __DIR__ . "/../vue/console/Liste.php";
     }
 
     public function details($id) {
@@ -14,25 +12,25 @@ class ConsoleController {
             echo "Console introuvable.";
             exit;
         }
-        include __DIR__ . "/../vue/console/details.php";
+        include __DIR__ . "/../vue/console/Details.php";
     }
 
     public function ajouter() {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $nomConsole = $_POST["nomConsole"] ?? '';
-            $constructeur = $_POST["constructeur"] ?? '';
+            $fabricant = $_POST["fabricant"] ?? '';
             
-            if ($nomConsole === '' || $constructeur === '') {
+            if ($nomConsole === '' || $fabricant === '') {
                 $erreur = "Tous les champs sont obligatoires.";
-                include __DIR__ . "/../vue/console/ajouter.php";
+                include __DIR__ . "/../vue/console/Ajouter.php";
                 return;
             }
             
-            ConsoleDAO::insert($nomConsole, $constructeur);
-            header("Location: Index.php?action=listerConsoles");
+            ConsoleDAO::insert($nomConsole, $fabricant);
+            header("Location: " . url('Index.php', ['action' => 'listerConsoles']));
             exit;
         }
-        include __DIR__ . "/../vue/console/ajouter.php";
+        include __DIR__ . "/../vue/console/Ajouter.php";
     }
 
     public function modifier($id) {
@@ -44,18 +42,18 @@ class ConsoleController {
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $nomConsole = $_POST["nomConsole"] ?? '';
-            $constructeur = $_POST["constructeur"] ?? '';
+            $fabricant = $_POST["fabricant"] ?? '';
             
-            ConsoleDAO::update($id, $nomConsole, $constructeur);
-            header("Location: Index.php?action=detailsConsole&id=" . $id);
+            ConsoleDAO::update($id, $nomConsole, $fabricant);
+            header("Location: " . url('Index.php', ['action' => 'detailsConsole', 'id' => $id]));
             exit;
         }
-        include __DIR__ . "/../vue/console/modifier.php";
+        include __DIR__ . "/../vue/console/Modifier.php";
     }
 
     public function supprimer($id) {
         ConsoleDAO::delete($id);
-        header("Location: Index.php?action=listerConsoles");
+        header("Location: " . url('Index.php', ['action' => 'listerConsoles']));
         exit;
     }
 }

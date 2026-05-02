@@ -1,0 +1,122 @@
+/* assets/style.css - thème sombre "geek" et responsive */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Courier New", Courier, monospace;
+    background-color: #1e1e1e;
+    color: #c5c8c6;
+    line-height: 1.5;
+}
+
+a, a:visited {
+    color: #81a2be;
+    text-decoration: none;
+}
+a:hover {
+    color: #b294bb;
+    text-decoration: underline;
+}
+
+header {
+    padding: 1rem;
+    background-color: #282a36;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+nav {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+main {
+    padding: 1rem;
+    max-width: 900px;
+    margin: auto;
+}
+
+footer {
+    padding: 1rem;
+    background-color: #282a36;
+    text-align: center;
+    font-size: 0.8rem;
+}
+
+/* bouton style général */
+.btn, input[type=submit], button {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    margin: 0.2rem 0;
+    background-color: #6272a4;
+    color: #f8f8f2;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+.btn:hover, input[type=submit]:hover, button:hover {
+    background-color: #7086cf;
+}
+
+/* formulaire */
+form {
+    background-color: #282a36;
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+label {
+    display: block;
+    margin-top: 0.5rem;
+}
+
+input[type=text], input[type=number], input[type=email], select, textarea {
+    width: 100%;
+    padding: 0.4rem;
+    margin-top: 0.2rem;
+    background-color: #44475a;
+    color: #f8f8f2;
+    border: 1px solid #6272a4;
+    border-radius: 3px;
+}
+
+/* tableau et listes */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+}
+table th, table td {
+    border: 1px solid #44475a;
+    padding: 0.4rem;
+    text-align: left;
+}
+
+ul, ol {
+    margin: 0.5rem 0 0.5rem 1.5rem;
+}
+
+code, pre {
+    background-color: #44475a;
+    color: #f8f8f2;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: "Courier New", Courier, monospace;
+}
+
+/* responsive adjustments */
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 1.2rem;
+    }
+    nav {
+        font-size: 0.8rem;
+    }
+    main {
+        padding: 0.5rem;
+    }
+}
