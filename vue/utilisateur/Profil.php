@@ -1,4 +1,6 @@
 <?php
+/** @var Utilisateur $utilisateur */
+
 $pageTitle = "Profil";
 ?>
 <?php include_once __DIR__ . '/../partials/header.php'; ?>
@@ -18,4 +20,3 @@ $pageTitle = "Profil";
 </div>
 
 <?php include_once __DIR__ . '/../partials/footer.php'; ?>
-

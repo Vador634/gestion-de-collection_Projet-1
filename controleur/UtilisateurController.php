@@ -17,7 +17,7 @@ class UtilisateurController {
         }
         
         // ✅ Si POST : traiter la connexion
-        $email = $_POST['email'] ?? '';
+        $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL) ?: trim($_POST['email'] ?? '');
         $motDePasse = $_POST['motDePasse'] ?? '';
         
         if ($email === '' || $motDePasse === '') {
@@ -56,14 +56,14 @@ class UtilisateurController {
         }
         
         // ✅ Si POST : traiter l'inscription
-        $nom = $_POST['nom'] ?? '';
-        $prenom = $_POST['prenom'] ?? '';
-        $pseudo = $_POST['pseudo'] ?? '';
-        $email = $_POST['email'] ?? '';
+        $nom = trim($_POST['nom'] ?? '');
+        $prenom = trim($_POST['prenom'] ?? '');
+        $pseudo = trim($_POST['pseudo'] ?? '');
+        $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
         $motDePasse = $_POST['motDePasse'] ?? '';
         
-        if ($nom === '' || $prenom === '' || $pseudo === '' || $email === '' || $motDePasse === '') {
-            $erreur = "Tous les champs sont obligatoires.";
+        if ($nom === '' || $prenom === '' || $pseudo === '' || !$email || $motDePasse === '') {
+            $erreur = "Tous les champs sont obligatoires et l'email doit être valide.";
             include __DIR__ . '/../vue/utilisateur/Register.php';
             return;
         }
@@ -113,7 +113,3 @@ class UtilisateurController {
     }
 }
 ?>
-
-
-
-

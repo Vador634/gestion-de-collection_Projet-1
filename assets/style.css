@@ -1,122 +1,223 @@
-/* assets/style.css - thème sombre "geek" et responsive */
+/* assets/style.css - thème moderne, clair et accessible */
 
 body {
     margin: 0;
     padding: 0;
-    font-family: "Courier New", Courier, monospace;
-    background-color: #1e1e1e;
-    color: #c5c8c6;
-    line-height: 1.5;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f4f7f6;
+    color: #212529;
+    line-height: 1.6;
 }
 
 a, a:visited {
-    color: #81a2be;
+    color: #0d6efd;
     text-decoration: none;
 }
 a:hover {
-    color: #b294bb;
+    color: #0a58ca;
     text-decoration: underline;
 }
 
 header {
-    padding: 1rem;
-    background-color: #282a36;
+    padding: 1rem 2rem;
+    background-color: #212529;
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 header h1 {
-    margin: 0;
-    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.75rem;
 }
 
 nav {
     margin-top: 0.5rem;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+nav a, nav a:visited {
+    color: #f8f9fa;
+    background-color: transparent;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+nav a:hover, nav a.active {
+    background-color: #0d6efd;
+    color: #ffffff;
+    text-decoration: none;
 }
 
 main {
-    padding: 1rem;
-    max-width: 900px;
+    padding: 2rem;
+    max-width: 1000px;
     margin: auto;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    min-height: calc(100vh - 160px);
+    border-radius: 8px;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
 }
 
 footer {
     padding: 1rem;
-    background-color: #282a36;
+    background-color: #212529;
+    color: #ffffff;
     text-align: center;
-    font-size: 0.8rem;
-}
-
-/* bouton style général */
-.btn, input[type=submit], button {
-    display: inline-block;
-    padding: 0.4rem 0.8rem;
-    margin: 0.2rem 0;
-    background-color: #6272a4;
-    color: #f8f8f2;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
     font-size: 0.9rem;
 }
-.btn:hover, input[type=submit]:hover, button:hover {
-    background-color: #7086cf;
+
+/* bouton style général (DRY) */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin: 0.2rem 0.2rem 0.2rem 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.2s, transform 0.1s, color 0.2s;
+    text-align: center;
+    text-decoration: none;
+}
+.btn:active {
+    transform: scale(0.98);
+}
+
+/* Modificateurs de tailles */
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Modificateurs de couleurs */
+.btn-primary {
+    background-color: #0d6efd;
+    color: #ffffff;
+}
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    color: #ffffff;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #ffffff;
+}
+.btn-secondary:hover {
+    background-color: #5c636a;
+    color: #ffffff;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+.btn-danger:hover {
+    background-color: #b02a37;
+    color: #ffffff;
+}
+
+/* Bouton Retour (Navigation) */
+.btn-back {
+    background-color: transparent;
+    color: #495057;
+    border: 1px solid #ced4da;
+}
+.btn-back:hover {
+    background-color: #e9ecef;
+    color: #212529;
 }
 
 /* formulaire */
 form {
-    background-color: #282a36;
-    padding: 1rem;
-    border-radius: 4px;
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    margin-bottom: 1.5rem;
 }
 
 label {
     display: block;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
+    font-weight: 600;
+    color: #495057;
 }
 
 input[type=text], input[type=number], input[type=email], select, textarea {
     width: 100%;
-    padding: 0.4rem;
-    margin-top: 0.2rem;
-    background-color: #44475a;
-    color: #f8f8f2;
-    border: 1px solid #6272a4;
-    border-radius: 3px;
+    padding: 0.6rem;
+    margin-top: 0.4rem;
+    background-color: #ffffff;
+    color: #212529;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
 /* tableau et listes */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin: 0.5rem 0;
+    margin: 1.5rem 0;
+    background-color: #ffffff;
 }
 table th, table td {
-    border: 1px solid #44475a;
-    padding: 0.4rem;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem;
     text-align: left;
+}
+table th {
+    background-color: #e9ecef;
+    font-weight: 600;
+}
+table tr:nth-child(even) {
+    background-color: #f8f9fa;
 }
 
 ul, ol {
-    margin: 0.5rem 0 0.5rem 1.5rem;
+    margin: 1rem 0 1rem 2rem;
 }
 
 code, pre {
-    background-color: #44475a;
-    color: #f8f8f2;
+    background-color: #f8f9fa;
+    color: #d63384;
     padding: 0.2rem 0.4rem;
-    border-radius: 3px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
     font-family: "Courier New", Courier, monospace;
 }
 
 /* responsive adjustments */
 @media (max-width: 600px) {
-    header h1 {
-        font-size: 1.2rem;
-    }
     nav {
-        font-size: 0.8rem;
+        flex-direction: column;
+        gap: 5px;
     }
     main {
-        padding: 0.5rem;
+        padding: 1rem;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        display: block;
     }
 }

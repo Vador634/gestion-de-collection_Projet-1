@@ -2,8 +2,12 @@
 // Autoload simple : mappe les classes aux dossiers `controleur/` et `modele/`
 require_once __DIR__ . '/Database.php';
 
-// BASE URL pour les redirections et liens
-define('BASE_URL', 'http://localhost/Gestion_de_collection/');
+// Génération dynamique de la BASE_URL (s'adapte automatiquement à ton serveur Apache)
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$dir = dirname($_SERVER['SCRIPT_NAME']);
+$baseDir = rtrim(str_replace('\\', '/', $dir), '/');
+define('BASE_URL', $protocol . $host . $baseDir . '/');
 
 // Fonction helper pour les URLs
 function url($path = '', $params = []) {

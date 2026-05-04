@@ -1,7 +1,7 @@
 <?php
-// vue/collection/liste.php
-?>
-<?php
+/** @var Collection[] $collections */
+/** @var array $counts */
+
 $pageTitle = "Liste des collections";
 ?>
 <?php include __DIR__ . "/../partials/header.php"; ?>
@@ -10,7 +10,7 @@ $pageTitle = "Liste des collections";
 
 <!-- Bouton créer nouvelle collection -->
 <p>
-    <a href="<?= url('Index.php', ['action' => 'creerCollection']) ?>">
+    <a href="<?= url('Index.php', ['action' => 'creerCollection']) ?>" class="btn btn-primary">
         Créer une nouvelle collection
     </a>
 </p>
@@ -33,20 +33,20 @@ $pageTitle = "Liste des collections";
 
         <tbody>
         <?php foreach ($collections as $col): 
-            $nb = CollectionDAO::countJeux($col->idCollection);
+            $nb = $counts[$col->idCollection] ?? 0;
         ?>
             <tr>
                 <td><?= htmlspecialchars($col->idCollection) ?></td>
                 <td><?= htmlspecialchars($col->nomCollection) ?></td>
                 <td><?= htmlspecialchars($col->dateCreation) ?></td>
-                <td><?= htmlspecialchars($col->notePerso) ?></td>
+                <td><?= htmlspecialchars((string)$col->notePerso) ?></td>
                 <td><?= htmlspecialchars($col->idUtilisateur) ?></td>
                 <td><?= $nb ?? 0 ?></td>
 
                 <td>
-                    <a href="<?= url('Index.php', ['action' => 'detailsCollection', 'id' => $col->idCollection]) ?>">Détails</a> |
-                    <a href="<?= url('Index.php', ['action' => 'modifierCollection', 'id' => $col->idCollection]) ?>">Modifier</a> |
-                    <a href="<?= url('Index.php', ['action' => 'supprimerCollection', 'id' => $col->idCollection]) ?>" onclick="return confirm('Supprimer ?')">Supprimer</a>
+                    <a href="<?= url('Index.php', ['action' => 'detailsCollection', 'id' => $col->idCollection]) ?>" class="btn btn-secondary btn-sm">Détails</a>
+                    <a href="<?= url('Index.php', ['action' => 'modifierCollection', 'id' => $col->idCollection]) ?>" class="btn btn-secondary btn-sm">Modifier</a>
+                    <a href="<?= url('Index.php', ['action' => 'supprimerCollection', 'id' => $col->idCollection]) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Supprimer ?')">Supprimer</a>
                 </td>
             </tr>
         <?php endforeach; ?>
@@ -55,8 +55,7 @@ $pageTitle = "Liste des collections";
 <?php endif; ?>
 
 <div style="margin-top:20px;">
-    <a href="<?= url('Index.php') ?>" class="btn">Retour à l'accueil</a>
+    <a href="<?= url('Index.php') ?>" class="btn btn-secondary">Retour à l'accueil</a>
 </div>
 
 <?php include __DIR__ . "/../partials/footer.php"; ?>
-

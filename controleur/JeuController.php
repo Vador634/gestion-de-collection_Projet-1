@@ -1,10 +1,25 @@
 <?php
 class JeuController {
+    /**
+     * Liste tous les jeux.
+     * 
+     * @return void
+     */
     public function liste() {
         $jeux = JeuDAO::getAll();
+        $consolesParJeu = [];
+        foreach ($jeux as $jeu) {
+            $consolesParJeu[$jeu->getIdJeu()] = JeuDAO::getConsoles($jeu->getIdJeu());
+        }
         include __DIR__ . "/../vue/jeu/Liste.php";
     }
 
+    /**
+     * Affiche les détails d'un jeu spécifique.
+     * 
+     * @param int $id Identifiant du jeu
+     * @return void
+     */
     public function details($id) {
         $jeu = JeuDAO::getById($id);
         if (!$jeu) {
@@ -19,6 +34,10 @@ class JeuController {
         include __DIR__ . "/../vue/jeu/Details.php";
     }
 
+    /**
+     * Gère l'ajout d'un nouveau jeu.
+     * @return void
+     */
     public function ajouter() {
         // on peut arriver depuis une collection
         $idCollection = $_GET['idCollection'] ?? null;
@@ -32,13 +51,13 @@ class JeuController {
         $editeurs = EditeurDAO::getAll();
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $titre = $_POST["titre"] ?? '';
-            $annee = $_POST["anneeSortie"] ?? null;
-            $prix = $_POST["prixEstime"] ?? null;
-            $cond = $_POST['idCondition'] ?? null;
-            $rare = $_POST['idRarete'] ?? null;
-            $dev  = $_POST['idDeveloppeur'] ?? null;
-            $idCollection = $_POST['idCollection'] ?? $idCollection;
+            $titre = trim($_POST["titre"] ?? '');
+            $annee = filter_input(INPUT_POST, 'anneeSortie', FILTER_VALIDATE_INT) ?: null;
+            $prix = filter_input(INPUT_POST, 'prixEstime', FILTER_VALIDATE_FLOAT) ?: null;
+            $cond = filter_input(INPUT_POST, 'idCondition', FILTER_VALIDATE_INT) ?: null;
+            $rare = filter_input(INPUT_POST, 'idRarete', FILTER_VALIDATE_INT) ?: null;
+            $dev  = filter_input(INPUT_POST, 'idDeveloppeur', FILTER_VALIDATE_INT) ?: null;
+            $idCollection = filter_input(INPUT_POST, 'idCollection', FILTER_VALIDATE_INT) ?: $idCollection;
             $selConsoles = $_POST['consoles'] ?? [];
             $selGenres = $_POST['genres'] ?? [];
             $selEditeurs = $_POST['editeurs'] ?? [];
@@ -66,6 +85,12 @@ class JeuController {
         include __DIR__ . "/../vue/jeu/Ajouter.php";
     }
 
+    /**
+     * Gère la modification d'un jeu.
+     * 
+     * @param int $id Identifiant du jeu
+     * @return void
+     */
     public function modifier($id) {
         $jeu = JeuDAO::getById($id);
         if (!$jeu) {
@@ -87,16 +112,22 @@ class JeuController {
         $currentEditeurs = JeuDAO::getEditeurs($id);
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $titre = $_POST["titre"] ?? '';
-            $annee = $_POST["anneeSortie"] ?? null;
-            $prix = $_POST["prixEstime"] ?? null;
-            $cond = $_POST['idCondition'] ?? null;
-            $rare = $_POST['idRarete'] ?? null;
-            $dev  = $_POST['idDeveloppeur'] ?? null;
+            $titre = trim($_POST["titre"] ?? '');
+            $annee = filter_input(INPUT_POST, 'anneeSortie', FILTER_VALIDATE_INT) ?: null;
+            $prix = filter_input(INPUT_POST, 'prixEstime', FILTER_VALIDATE_FLOAT) ?: null;
+            $cond = filter_input(INPUT_POST, 'idCondition', FILTER_VALIDATE_INT) ?: null;
+            $rare = filter_input(INPUT_POST, 'idRarete', FILTER_VALIDATE_INT) ?: null;
+            $dev  = filter_input(INPUT_POST, 'idDeveloppeur', FILTER_VALIDATE_INT) ?: null;
             $selConsoles = $_POST['consoles'] ?? [];
             $selGenres = $_POST['genres'] ?? [];
             $selEditeurs = $_POST['editeurs'] ?? [];
             
+            if ($titre === '') {
+                $erreur = "Le titre est obligatoire.";
+                include __DIR__ . "/../vue/jeu/Modifier.php";
+                return;
+            }
+
             JeuDAO::update($id, $titre, $annee, $prix, $cond, $rare, $dev);
             JeuDAO::setConsoles($id, $selConsoles);
             JeuDAO::setGenres($id, $selGenres);
@@ -107,11 +138,15 @@ class JeuController {
         include __DIR__ . "/../vue/jeu/Modifier.php";
     }
 
+    /**
+     * Supprime un jeu de la base de données.
+     * 
+     * @param int $id Identifiant du jeu
+     * @return void
+     */
     public function supprimer($id) {
         JeuDAO::delete($id);
         header("Location: " . url('Index.php', ['action' => 'listeJeux']));
         exit;
     }
 }
-
-

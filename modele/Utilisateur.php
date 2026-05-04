@@ -7,7 +7,7 @@ class Utilisateur {
     private $pseudo;
     private $motDePasse;
 
-    public function __construct($id = null, $nom, $prenom, $email, $pseudo, $motDePasse) {
+    public function __construct($id, $nom, $prenom, $email, $pseudo, $motDePasse) {
         $this->id = $id;
         $this->nom = $nom;
         $this->prenom = $prenom;
@@ -30,4 +30,3 @@ class Utilisateur {
     public function setMotDePasse($motDePasse) { $this->motDePasse = $motDePasse; }
 }
 ?>
-

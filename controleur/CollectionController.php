@@ -1,18 +1,27 @@
 <?php
 class CollectionController {
 
-    /* ================================
-       AFFICHER TOUTES LES COLLECTIONS
-       ================================ */
+    /**
+     * Affiche la liste de toutes les collections.
+     * @return void
+     */
     public function liste() {
         $collections = CollectionDAO::getAll();
+        $counts = [];
+        // Préparation des données pour la vue afin de respecter le pattern MVC
+        foreach ($collections as $col) {
+            $counts[$col->idCollection] = CollectionDAO::countJeux($col->idCollection);
+        }
         include __DIR__ . "/../vue/collection/liste.php";
     }
 
 
-    /* ================================
-       DETAILS D'UNE COLLECTION
-       ================================ */
+    /**
+     * Affiche les détails d'une collection spécifique.
+     * 
+     * @param int $id Identifiant de la collection
+     * @return void
+     */
     public function details($id) {
         $collection = CollectionDAO::getById($id);
 
@@ -34,9 +43,10 @@ class CollectionController {
     }
 
 
-    /* ================================
-       CRÉATION D'UNE COLLECTION
-       ================================ */
+    /**
+     * Gère la création d'une nouvelle collection.
+     * @return void
+     */
     public function creer() {
         // Vérifie si l'utilisateur est connecté
         if (!isset($_SESSION['utilisateur']['id'])) {
@@ -70,9 +80,12 @@ class CollectionController {
     }
 
 
-    /* ================================
-       MODIFIER UNE COLLECTION
-       ================================ */
+    /**
+     * Gère la modification d'une collection existante.
+     * 
+     * @param int $id Identifiant de la collection
+     * @return void
+     */
     public function modifier($id) {
 
         $collection = CollectionDAO::getById($id);
@@ -87,6 +100,12 @@ class CollectionController {
             $nom = trim($_POST['nomCollection'] ?? '');
             $note = trim($_POST['notePerso'] ?? '') ?: null;
 
+            if ($nom === '') {
+                $erreur = "Le nom de la collection est obligatoire.";
+                include __DIR__ . "/../vue/collection/Modifier.php";
+                return;
+            }
+
             CollectionDAO::update($id, $nom, $note);
 
             header("Location: " . url('Index.php', ['action' => 'detailsCollection', 'id' => $id]));
@@ -97,9 +116,12 @@ class CollectionController {
     }
 
 
-    /* ================================
-       SUPPRIMER UNE COLLECTION
-       ================================ */
+    /**
+     * Supprime une collection existante.
+     * 
+     * @param int $id Identifiant de la collection
+     * @return void
+     */
     public function supprimer($id) {
         CollectionDAO::delete($id);
         header("Location: " . url('Index.php', ['action' => 'listeCollections']));
@@ -107,13 +129,15 @@ class CollectionController {
     }
 
 
-    /* ================================
-       AJOUTER / RETIRER UN JEU
-       ================================ */
-    // méthodes à usage interne (utilisées par les nouvelles routes)
+    /**
+     * Associe un jeu à une collection.
+     * 
+     * @param int $idCollection Identifiant de la collection
+     * @return void
+     */
     public function ajouterJeuCollection($idCollection) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $idJeu = $_POST['idJeu'] ?? null;
+            $idJeu = filter_input(INPUT_POST, 'idJeu', FILTER_VALIDATE_INT);
             if ($idJeu) {
                 CollectionDAO::ajouterJeu($idCollection, $idJeu);
             }
@@ -122,10 +146,16 @@ class CollectionController {
         exit;
     }
 
+    /**
+     * Retire un jeu d'une collection.
+     * 
+     * @param int $idCollection Identifiant de la collection
+     * @param int $idJeu Identifiant du jeu
+     * @return void
+     */
     public function retirerJeuCollection($idCollection, $idJeu) {
         CollectionDAO::retirerJeu($idCollection, $idJeu);
         header("Location: " . url('Index.php', ['action' => 'detailsCollection', 'id' => $idCollection]));
         exit;
     }
 }
-

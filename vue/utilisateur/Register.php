@@ -1,4 +1,6 @@
 <?php
+/** @var string|null $erreur */
+
 $pageTitle = "Inscription";
 ?>
 <?php include __DIR__ . "/../partials/header.php"; ?>
@@ -25,12 +27,10 @@ $pageTitle = "Inscription";
     <label>Mot de passe :</label>
     <input type="password" name="motDePasse" required><br><br>
 
-    <button type="submit" class="btn">S'inscrire</button>
+    <button type="submit" class="btn btn-primary">S'inscrire</button>
 </form>
 
 <p><a href="<?= url('Index.php', ['action' => 'login']) ?>">Déjà inscrit ?</a></p>
 <p><a href="<?= url('Index.php') ?>">Retour à l'accueil</a></p>
 
 <?php include __DIR__ . "/../partials/footer.php"; ?>
-
-

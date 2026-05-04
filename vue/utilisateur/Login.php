@@ -1,4 +1,6 @@
 <?php
+/** @var string|null $erreur */
+
 $pageTitle = "Connexion";
 ?>
 <?php include __DIR__ . "/../partials/header.php"; ?>

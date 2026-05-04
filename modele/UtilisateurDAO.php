@@ -11,32 +11,34 @@ class UtilisateurDAO {
 
     /**
      * Inscription d'un nouvel utilisateur
+     * 
+     * @param Utilisateur $u Objet Utilisateur à insérer
+     * @return int|bool L'ID du nouvel utilisateur ou false en cas d'échec
      */
     public function inscrire(Utilisateur $u) {
-        $query = "SELECT MAX(idUtilisateur) AS dernier_id FROM Utilisateur";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        // Sécurisation : hachage du mot de passe
+        $motDePasseHash = password_hash($u->getMotDePasse(), PASSWORD_BCRYPT);
 
-        $nouvel_id = ($result['dernier_id'] ?? 0) + 1;
-        $motDePasse = $u->getMotDePasse(); // pas de hash pour le jeu d'essai
-
-        $query = "INSERT INTO Utilisateur (idUtilisateur, mailUtilisateur, motDePasse, pseudo, description, nom, prenom)
-                  VALUES (:id, :email, :motDePasse, :pseudo, '', :nom, :prenom)";
+        // Délégation de l'ID à l'AUTO_INCREMENT de la base de données
+        $query = "INSERT INTO Utilisateur (mailUtilisateur, motDePasse, pseudo, description, nom, prenom)
+                  VALUES (:email, :motDePasse, :pseudo, '', :nom, :prenom)";
         $stmt = $this->conn->prepare($query);
 
-        $stmt->bindValue(':id', $nouvel_id, PDO::PARAM_INT);
         $stmt->bindValue(':email', $u->getEmail());
-        $stmt->bindValue(':motDePasse', $motDePasse);
+        $stmt->bindValue(':motDePasse', $motDePasseHash);
         $stmt->bindValue(':pseudo', $u->getPseudo());
         $stmt->bindValue(':nom', $u->getNom());
         $stmt->bindValue(':prenom', $u->getPrenom());
 
-        return $stmt->execute() ? $nouvel_id : false;
+        return $stmt->execute() ? (int)$this->conn->lastInsertId() : false;
     }
 
     /**
      * Connexion d’un utilisateur existant
+     * 
+     * @param string $email
+     * @param string $motDePasse Mot de passe en clair
+     * @return Utilisateur|null
      */
     public function connecter($email, $motDePasse) {
         $query = "SELECT * FROM Utilisateur WHERE mailUtilisateur = :email";
@@ -44,7 +46,8 @@ class UtilisateurDAO {
         $stmt->execute([":email" => $email]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($row && $row['motDePasse'] === $motDePasse) {
+        // Vérification sécurisée (et option de fallback pour les tests précédents non-hachés)
+        if ($row && (password_verify($motDePasse, $row['motDePasse']) || $row['motDePasse'] === $motDePasse)) {
             return new Utilisateur(
                 $row['idUtilisateur'],
                 $row['nom'],
@@ -59,6 +62,9 @@ class UtilisateurDAO {
 
     /**
      * Trouver un utilisateur par ID
+     * 
+     * @param int $id
+     * @return Utilisateur|null
      */
     public function trouverParId($id) {
         $query = "SELECT * FROM Utilisateur WHERE idUtilisateur = :id";
@@ -80,8 +86,3 @@ class UtilisateurDAO {
     }
 }
 ?>
-
-
-
-
-

@@ -183,31 +183,10 @@ if (isset($_GET['action'])) {
         $controller->show();
         exit;
     }
-    }
-?>
-<?php
-// page d'accueil
-$pageTitle = "Accueil";
-include __DIR__ . '/vue/partials/Header.php';
-?>
 
-<?php if (!isset($_SESSION['utilisateur'])): ?>
-    <p><a class="btn" href="<?= url('Index.php', ['action' => 'login']) ?>">Connexion</a>
-    <a class="btn" href="<?= url('Index.php', ['action' => 'register']) ?>">Inscription</a></p>
-<?php else: ?>
-    <p>Bienvenue <strong><?php echo htmlspecialchars($_SESSION['utilisateur']['pseudo']); ?></strong></p>
-    <p>
-        <a class="btn" href="<?= url('Index.php', ['action' => 'listeCollections']) ?>">Voir mes collections</a>
-        <a class="btn" href="<?= url('Index.php', ['action' => 'profil']) ?>">Mon profil</a>
-        <a class="btn" href="<?= url('Index.php', ['action' => 'documentation']) ?>">Documentation</a>
-        <a class="btn" href="<?= url('Index.php', ['action' => 'logout']) ?>">Déconnexion</a>
-    </p>
-<?php endif; ?>
+}
 
-<?php include __DIR__ . '/vue/partials/Footer.php'; ?>
-
-
-
-
-
-
+// Action par défaut (Accueil)
+require_once __DIR__ . '/controleur/HomeController.php';
+$controller = new HomeController();
+$controller->index();

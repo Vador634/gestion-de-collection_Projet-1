@@ -1,7 +1,9 @@
 <?php
-// vue/collection/details.php
-?>
-<?php
+/** @var Collection $collection */
+/** @var int $nbJeux */
+/** @var Jeu[] $jeux */
+/** @var Jeu[] $allJeux */
+
 $pageTitle = "Détails de la collection";
 ?>
 <?php include __DIR__ . "/../partials/header.php"; ?>
@@ -14,7 +16,7 @@ $pageTitle = "Détails de la collection";
     <p><strong>Id :</strong> <?= htmlspecialchars($collection->idCollection) ?></p>
     <p><strong>Nom :</strong> <?= htmlspecialchars($collection->nomCollection) ?></p>
     <p><strong>Date de création :</strong> <?= htmlspecialchars($collection->dateCreation) ?></p>
-    <p><strong>Note perso :</strong> <?= nl2br(htmlspecialchars($collection->notePerso)) ?></p>
+    <p><strong>Note perso :</strong> <?= nl2br(htmlspecialchars((string)$collection->notePerso)) ?></p>
     <p><strong>Propriétaire (id) :</strong> <?= htmlspecialchars($collection->idUtilisateur) ?></p>
     <p><strong>Nombre de jeux :</strong> <?= $nbJeux ?></p>
 
@@ -57,4 +59,3 @@ $pageTitle = "Détails de la collection";
 <?php endif; ?>
 
 <?php include __DIR__ . "/../partials/footer.php"; ?>
-

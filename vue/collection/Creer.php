@@ -1,4 +1,6 @@
 <?php
+/** @var string|null $erreur */
+
 $pageTitle = "Créer une collection";
 ?>
 <?php include __DIR__ . "/../partials/header.php"; ?>
@@ -16,11 +18,10 @@ $pageTitle = "Créer une collection";
     <label>Note personnelle :</label><br>
     <textarea name="notePerso"></textarea><br><br>
 
-    <button type="submit">Créer</button>
+    <button type="submit" class="btn btn-primary">Créer</button>
 </form>
 <!-- Bouton retour -->
 <div style="margin-top:20px;">
-    <a href="<?= url('Index.php', ['action' => 'listeCollections']) ?>" class="btn">Retour</a>
+    <a href="<?= url('Index.php', ['action' => 'listeCollections']) ?>" class="btn btn-secondary">Retour</a>
 </div>
 <?php include __DIR__ . "/../partials/footer.php"; ?>
-

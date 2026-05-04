@@ -1,4 +1,7 @@
 <?php
+/** @var Collection $collection */
+/** @var string|null $erreur */
+
 $pageTitle = "Modifier une collection";
 ?>
 <?php include __DIR__ . "/../partials/header.php"; ?>
@@ -17,7 +20,7 @@ $pageTitle = "Modifier une collection";
     <label>Note personnelle :</label><br>
     <textarea name="notePerso"><?= htmlspecialchars($collection->notePerso) ?></textarea><br><br>
 
-    <button type="submit">Modifier</button>
+    <button type="submit" class="btn btn-primary">Modifier</button>
 </form>
 <?php else: ?>
     <p>Collection introuvable.</p>
@@ -25,6 +28,6 @@ $pageTitle = "Modifier une collection";
 
 <!-- Bouton retour -->
 <div style="margin-top:20px;">
-    <a href="<?= url('Index.php', ['action' => 'listeCollections']) ?>" class="btn">Retour</a>
+    <a href="<?= url('Index.php', ['action' => 'listeCollections']) ?>" class="btn btn-secondary">Retour</a>
 </div>
 <?php include __DIR__ . "/../partials/footer.php"; ?>
