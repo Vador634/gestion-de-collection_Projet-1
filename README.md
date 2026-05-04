@@ -31,9 +31,9 @@ Utilisation de requêtes préparées (PDO).
 Protection contre les failles XSS via htmlspecialchars.
 
 <img width="1350" height="638" alt="image" src="https://github.com/user-attachments/assets/0f63bb4c-f648-4711-aca1-4e96e16206d6" />
-
+<br>
 <img width="1342" height="541" alt="image" src="https://github.com/user-attachments/assets/588a6268-68be-4a00-a027-8f435454e4ef" />
-
+<br>
 <img width="939" height="617" alt="image" src="https://github.com/user-attachments/assets/440d5b07-c951-4af4-a78c-e29061396070" />
 
 Developed by:
