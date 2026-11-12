@@ -2,61 +2,67 @@
 class ConsoleController {
     public function lister() {
         $consoles = ConsoleDAO::getAll();
+        $pageTitle = "Consoles";
         include __DIR__ . "/../vue/console/Liste.php";
     }
 
     public function details($id) {
-        $console = ConsoleDAO::getById($id);
-        if (!$console) {
-            header("HTTP/1.0 404 Not Found");
-            echo "Console introuvable.";
-            exit;
-        }
+        $console = $this->consoleOu404($id);
+        $nbJeux = ConsoleDAO::countJeux($id);
+        $pageTitle = $console->getNomConsole();
         include __DIR__ . "/../vue/console/Details.php";
     }
 
     public function ajouter() {
+        $nomConsole = '';
+        $fabricant = '';
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $nomConsole = $_POST["nomConsole"] ?? '';
-            $fabricant = $_POST["fabricant"] ?? '';
-            
-            if ($nomConsole === '' || $fabricant === '') {
-                $erreur = "Tous les champs sont obligatoires.";
-                include __DIR__ . "/../vue/console/Ajouter.php";
-                return;
+            $nomConsole = trim((string)($_POST["nomConsole"] ?? ''));
+            $fabricant = trim((string)($_POST["fabricant"] ?? ''));
+            $erreur = $this->valider($nomConsole, $fabricant);
+            if (!$erreur) {
+                ConsoleDAO::insert($nomConsole, $fabricant);
+                flash("Console « $nomConsole » ajoutée.");
+                rediriger(['action' => 'listerConsoles']);
             }
-            
-            ConsoleDAO::insert($nomConsole, $fabricant);
-            header("Location: " . url('Index.php', ['action' => 'listerConsoles']));
-            exit;
         }
+        $pageTitle = "Ajouter une console";
         include __DIR__ . "/../vue/console/Ajouter.php";
     }
 
     public function modifier($id) {
-        $console = ConsoleDAO::getById($id);
-        if (!$console) {
-            echo "Console introuvable.";
-            exit;
-        }
-
+        $console = $this->consoleOu404($id);
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $nomConsole = $_POST["nomConsole"] ?? '';
-            $fabricant = $_POST["fabricant"] ?? '';
-            
-            ConsoleDAO::update($id, $nomConsole, $fabricant);
-            header("Location: " . url('Index.php', ['action' => 'detailsConsole', 'id' => $id]));
-            exit;
+            $nomConsole = trim((string)($_POST["nomConsole"] ?? ''));
+            $fabricant = trim((string)($_POST["fabricant"] ?? ''));
+            $erreur = $this->valider($nomConsole, $fabricant);
+            if (!$erreur) {
+                ConsoleDAO::update($id, $nomConsole, $fabricant);
+                flash("Console modifiée.");
+                rediriger(['action' => 'detailsConsole', 'id' => $id]);
+            }
+            $console = new Console($id, $nomConsole, $fabricant);
         }
+        $pageTitle = "Modifier une console";
         include __DIR__ . "/../vue/console/Modifier.php";
     }
 
     public function supprimer($id) {
+        $console = $this->consoleOu404($id);
         ConsoleDAO::delete($id);
-        header("Location: " . url('Index.php', ['action' => 'listerConsoles']));
-        exit;
+        flash("Console « {$console->getNomConsole()} » supprimée.");
+        rediriger(['action' => 'listerConsoles']);
+    }
+
+    private function valider($nom, $fabricant) {
+        if ($nom === '' || $fabricant === '') return "Tous les champs sont obligatoires.";
+        if (longueur($nom) > 100 || longueur($fabricant) > 100) return "100 caractères maximum par champ.";
+        return null;
+    }
+
+    private function consoleOu404($id) {
+        $console = ConsoleDAO::getById($id);
+        if (!$console) page_erreur(404, "Console introuvable.");
+        return $console;
     }
 }
-
-
-

@@ -1,23 +1,16 @@
-<?php
-$pageTitle = "Modifier un éditeur";
-?>
 <?php include __DIR__ . "/../partials/header.php"; ?>
 
-<h2>Modifier un éditeur</h2>
 <?php if (!empty($erreur)): ?>
-    <p style="color:red"><?= htmlspecialchars($erreur) ?></p>
+    <p class="alert alert-error"><?= e($erreur) ?></p>
 <?php endif; ?>
 
-<?php if ($editeur): ?>
-<form method="post" action="<?= url('Index.php',['action'=>'modifierEditeur','id'=>$editeur->idEditeur]) ?>">
-    <label>Nom éditeur :</label><br>
-    <input type="text" name="libelleEditeur" value="<?= htmlspecialchars($editeur->libelleEditeur) ?>" required><br><br>
-    <button type="submit">Modifier</button>
+<form method="post" action="<?= e(url('index.php', ['action' => 'modifierEditeur', 'id' => $editeur->idEditeur])) ?>">
+    <?= csrf_field() ?>
+    <label for="libelleEditeur">Nom de l'éditeur</label>
+    <input type="text" id="libelleEditeur" name="libelleEditeur" maxlength="100" value="<?= e($editeur->libelleEditeur) ?>" required>
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
 </form>
-<?php else: ?>
-    <p>Éditeur introuvable.</p>
-<?php endif; ?>
 
-<a href="<?= url('Index.php',['action'=>'listerEditeurs']) ?>">Retour à la liste</a>
+<p><a href="<?= e(url('index.php', ['action' => 'detailsEditeur', 'id' => $editeur->idEditeur])) ?>" class="btn btn-back">← Retour</a></p>
 
 <?php include __DIR__ . "/../partials/footer.php"; ?>

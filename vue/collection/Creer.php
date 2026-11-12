@@ -1,27 +1,25 @@
 <?php
 /** @var string|null $erreur */
-
-$pageTitle = "Créer une collection";
+/** @var string $nom */
+/** @var string $note */
 ?>
 <?php include __DIR__ . "/../partials/header.php"; ?>
 
-<h2>Créer une collection</h2>
-
 <?php if (!empty($erreur)): ?>
-    <p style="color:red"><?= htmlspecialchars($erreur) ?></p>
+    <p class="alert alert-error"><?= e($erreur) ?></p>
 <?php endif; ?>
 
-<form method="post" action="<?= url('Index.php', ['action' => 'creerCollection']) ?>">
-    <label>Nom de la collection :</label><br>
-    <input type="text" name="nomCollection" required><br><br>
+<form method="post" action="<?= e(url('index.php', ['action' => 'creerCollection'])) ?>">
+    <?= csrf_field() ?>
+    <label for="nomCollection">Nom de la collection</label>
+    <input type="text" id="nomCollection" name="nomCollection" maxlength="100" value="<?= e($nom) ?>" required>
 
-    <label>Note personnelle :</label><br>
-    <textarea name="notePerso"></textarea><br><br>
+    <label for="notePerso">Note personnelle (facultatif)</label>
+    <textarea id="notePerso" name="notePerso"><?= e($note) ?></textarea>
 
     <button type="submit" class="btn btn-primary">Créer</button>
 </form>
-<!-- Bouton retour -->
-<div style="margin-top:20px;">
-    <a href="<?= url('Index.php', ['action' => 'listeCollections']) ?>" class="btn btn-secondary">Retour</a>
-</div>
+
+<p><a href="<?= e(url('index.php', ['action' => 'listeCollections'])) ?>" class="btn btn-back">← Retour</a></p>
+
 <?php include __DIR__ . "/../partials/footer.php"; ?>

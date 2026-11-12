@@ -6,184 +6,185 @@ require_once __DIR__ . "/Genre.php";
 require_once __DIR__ . "/Editeur.php";
 
 class JeuDAO {
-    public static function getAll() {
-        $cnx = connexionPDO();
-        $req = $cnx->prepare("SELECT idJeu, titre, anneeSortie, prixEstime FROM Jeu ORDER BY titre");
-        $req->execute();
-        $resultat = $req->fetchAll(PDO::FETCH_ASSOC);
+    private const COLONNES = "idJeu, titre, anneeSortie, prixEstime, idCondition, idRarete, idDeveloppeur";
 
+    private static function versJeu(array $row) {
+        return new Jeu(
+            $row["idJeu"],
+            $row["titre"],
+            $row["anneeSortie"],
+            $row["prixEstime"],
+            $row["idCondition"],
+            $row["idRarete"],
+            $row["idDeveloppeur"]
+        );
+    }
+
+    public static function getAll() {
+        $req = connexionPDO()->query("SELECT " . self::COLONNES . " FROM Jeu ORDER BY titre");
         $jeux = [];
-        foreach ($resultat as $row) {
-            $jeux[] = new Jeu(
-                $row["idJeu"],
-                $row["titre"],
-                $row["anneeSortie"],
-                $row["prixEstime"]
-            );
+        foreach ($req->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $jeux[] = self::versJeu($row);
         }
         return $jeux;
     }
 
     public static function getById($id) {
-        $cnx = connexionPDO();
-        $req = $cnx->prepare("SELECT idJeu, titre, anneeSortie, prixEstime FROM Jeu WHERE idJeu = :id");
+        $req = connexionPDO()->prepare("SELECT " . self::COLONNES . " FROM Jeu WHERE idJeu = :id");
         $req->bindValue(":id", $id, PDO::PARAM_INT);
         $req->execute();
         $row = $req->fetch(PDO::FETCH_ASSOC);
-
-        if ($row) {
-            return new Jeu(
-                $row["idJeu"],
-                $row["titre"],
-                $row["anneeSortie"],
-                $row["prixEstime"]
-            );
-        }
-        return null;
+        return $row ? self::versJeu($row) : null;
     }
 
-    public static function insert($titre, $anneeSortie, $prixEstime) {
+    /**
+     * Ajoute un jeu. La condition, la rareté et le développeur sont facultatifs.
+     * @return int|false identifiant du jeu créé
+     */
+    public static function insert($titre, $anneeSortie, $prixEstime, $idCondition = null, $idRarete = null, $idDeveloppeur = null) {
         $cnx = connexionPDO();
         $req = $cnx->prepare(
-            "INSERT INTO Jeu(titre, anneeSortie, prixEstime) VALUES(:titre, :annee, :prix)"
+            "INSERT INTO Jeu(titre, anneeSortie, prixEstime, idCondition, idRarete, idDeveloppeur)
+             VALUES(:titre, :annee, :prix, :cond, :rare, :dev)"
         );
-        $req->bindValue(":titre", $titre, PDO::PARAM_STR);
-        $req->bindValue(":annee", $anneeSortie, PDO::PARAM_INT);
-        $req->bindValue(":prix", $prixEstime);
-        $ok = $req->execute();
-        if ($ok) return $cnx->lastInsertId();
-        return false;
+        self::lierChamps($req, $titre, $anneeSortie, $prixEstime, $idCondition, $idRarete, $idDeveloppeur);
+        return $req->execute() ? (int)$cnx->lastInsertId() : false;
     }
 
-    public static function update($id, $titre, $anneeSortie, $prixEstime) {
-        $cnx = connexionPDO();
-        $req = $cnx->prepare(
-            "UPDATE Jeu SET titre = :titre, anneeSortie = :annee, prixEstime = :prix WHERE idJeu = :id"
+    public static function update($id, $titre, $anneeSortie, $prixEstime, $idCondition = null, $idRarete = null, $idDeveloppeur = null) {
+        $req = connexionPDO()->prepare(
+            "UPDATE Jeu SET titre = :titre, anneeSortie = :annee, prixEstime = :prix,
+                            idCondition = :cond, idRarete = :rare, idDeveloppeur = :dev
+             WHERE idJeu = :id"
         );
         $req->bindValue(":id", $id, PDO::PARAM_INT);
-        $req->bindValue(":titre", $titre, PDO::PARAM_STR);
-        $req->bindValue(":annee", $anneeSortie, PDO::PARAM_INT);
-        $req->bindValue(":prix", $prixEstime);
+        self::lierChamps($req, $titre, $anneeSortie, $prixEstime, $idCondition, $idRarete, $idDeveloppeur);
         return $req->execute();
     }
 
+    private static function lierChamps(PDOStatement $req, $titre, $annee, $prix, $cond, $rare, $dev) {
+        $req->bindValue(":titre", $titre, PDO::PARAM_STR);
+        $req->bindValue(":annee", $annee, $annee === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindValue(":prix", $prix === null ? null : (string)$prix, $prix === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $req->bindValue(":cond", $cond, $cond === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindValue(":rare", $rare, $rare === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindValue(":dev", $dev, $dev === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+    }
+
+    /**
+     * Supprime un jeu et toutes ses associations (collections, consoles,
+     * genres, éditeurs, langues, modes de jeu), dans une transaction.
+     */
     public static function delete($id) {
         $cnx = connexionPDO();
-        // nettoyer tables associatives
-        $stmt = $cnx->prepare("DELETE FROM Disponible WHERE idJeu = :id");
-        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $stmt = $cnx->prepare("DELETE FROM GenreJeu WHERE idJeu = :id");
-        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $stmt = $cnx->prepare("DELETE FROM Edite WHERE idJeu = :id");
-        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $req = $cnx->prepare("DELETE FROM Jeu WHERE idJeu = :id");
-        $req->bindValue(":id", $id, PDO::PARAM_INT);
-        return $req->execute();
+        $cnx->beginTransaction();
+        try {
+            foreach (['Appartient', 'Disponible', 'GenreJeu', 'Edite', 'JeuLangue', 'JeuModeDeJeu', 'Jeu'] as $table) {
+                $stmt = $cnx->prepare("DELETE FROM $table WHERE idJeu = :id");
+                $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+                $stmt->execute();
+            }
+            $cnx->commit();
+            return true;
+        } catch (Exception $e) {
+            $cnx->rollBack();
+            throw $e;
+        }
     }
 
-    // ---------- helpers for many-to-many relations ----------
-    public static function getConsoles($idJeu) {
-        $cnx = connexionPDO();
-        $sql = "SELECT c.* FROM Console c
-                JOIN Disponible d ON c.idConsole = d.idConsole
-                WHERE d.idJeu = :id"; // c.fabricant used below
-        $stmt = $cnx->prepare($sql);
-        $stmt->bindValue(':id',$idJeu,PDO::PARAM_INT);
+    /** Nombre de collections qui contiennent ce jeu. */
+    public static function countCollections($idJeu) {
+        $stmt = connexionPDO()->prepare("SELECT COUNT(*) FROM Appartient WHERE idJeu = :id");
+        $stmt->bindValue(':id', $idJeu, PDO::PARAM_INT);
         $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return (int)$stmt->fetchColumn();
+    }
+
+    // ---------- Associations plusieurs-à-plusieurs ----------
+
+    public static function getConsoles($idJeu) {
+        $stmt = connexionPDO()->prepare(
+            "SELECT c.idConsole, c.nomConsole, c.fabricant FROM Console c
+             JOIN Disponible d ON c.idConsole = d.idConsole
+             WHERE d.idJeu = :id ORDER BY c.nomConsole"
+        );
+        $stmt->bindValue(':id', $idJeu, PDO::PARAM_INT);
+        $stmt->execute();
         $list = [];
-        foreach ($rows as $r) {
-            $list[] = new Console($r['idConsole'],$r['nomConsole'],$r['fabricant']);
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $list[] = new Console($r['idConsole'], $r['nomConsole'], $r['fabricant']);
+        }
+        return $list;
+    }
+
+    public static function getGenres($idJeu) {
+        $stmt = connexionPDO()->prepare(
+            "SELECT g.idGenre, g.libelleGenre FROM Genre g
+             JOIN GenreJeu gj ON g.idGenre = gj.idGenre
+             WHERE gj.idJeu = :id ORDER BY g.libelleGenre"
+        );
+        $stmt->bindValue(':id', $idJeu, PDO::PARAM_INT);
+        $stmt->execute();
+        $list = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $list[] = new Genre($r['idGenre'], $r['libelleGenre']);
+        }
+        return $list;
+    }
+
+    public static function getEditeurs($idJeu) {
+        $stmt = connexionPDO()->prepare(
+            "SELECT e.idEditeur, e.libelleEditeur FROM Editeur e
+             JOIN Edite ed ON e.idEditeur = ed.idEditeur
+             WHERE ed.idJeu = :id ORDER BY e.libelleEditeur"
+        );
+        $stmt->bindValue(':id', $idJeu, PDO::PARAM_INT);
+        $stmt->execute();
+        $list = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $list[] = new Editeur($r['idEditeur'], $r['libelleEditeur']);
         }
         return $list;
     }
 
     public static function setConsoles($idJeu, array $ids) {
-        $cnx = connexionPDO();
-        $cnx->beginTransaction();
-        $stmt = $cnx->prepare("DELETE FROM Disponible WHERE idJeu = :id");
-        $stmt->bindValue(':id',$idJeu,PDO::PARAM_INT);
-        $stmt->execute();
-        if (!empty($ids)) {
-            $stmt = $cnx->prepare("INSERT INTO Disponible(idJeu,idConsole) VALUES(:jeu,:console)");
-            foreach ($ids as $cid) {
-                $stmt->bindValue(':jeu',$idJeu,PDO::PARAM_INT);
-                $stmt->bindValue(':console',$cid,PDO::PARAM_INT);
-                $stmt->execute();
-            }
-        }
-        $cnx->commit();
-    }
-
-    public static function getGenres($idJeu) {
-        $cnx = connexionPDO();
-        $sql = "SELECT g.* FROM Genre g
-                JOIN GenreJeu gj ON g.idGenre = gj.idGenre
-                WHERE gj.idJeu = :id";
-        $stmt = $cnx->prepare($sql);
-        $stmt->bindValue(':id',$idJeu,PDO::PARAM_INT);
-        $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $list = [];
-        foreach ($rows as $r) {
-            $list[] = new Genre($r['idGenre'],$r['nomGenre'] ?? $r['libelleGenre']);
-        }
-        return $list;
+        self::remplacerAssociations('Disponible', 'idConsole', $idJeu, $ids);
     }
 
     public static function setGenres($idJeu, array $ids) {
-        $cnx = connexionPDO();
-        $cnx->beginTransaction();
-        $stmt = $cnx->prepare("DELETE FROM GenreJeu WHERE idJeu = :id");
-        $stmt->bindValue(':id',$idJeu,PDO::PARAM_INT);
-        $stmt->execute();
-        if (!empty($ids)) {
-            $stmt = $cnx->prepare("INSERT INTO GenreJeu(idJeu,idGenre) VALUES(:jeu,:genre)");
-            foreach ($ids as $gid) {
-                $stmt->bindValue(':jeu',$idJeu,PDO::PARAM_INT);
-                $stmt->bindValue(':genre',$gid,PDO::PARAM_INT);
-                $stmt->execute();
-            }
-        }
-        $cnx->commit();
-    }
-
-    public static function getEditeurs($idJeu) {
-        $cnx = connexionPDO();
-        $sql = "SELECT e.* FROM Editeur e
-                JOIN Edite ed ON e.idEditeur = ed.idEditeur
-                WHERE ed.idJeu = :id";
-        $stmt = $cnx->prepare($sql);
-        $stmt->bindValue(':id',$idJeu,PDO::PARAM_INT);
-        $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $list = [];
-        foreach ($rows as $r) {
-            $list[] = new Editeur($r['idEditeur'],$r['libelleEditeur']);
-        }
-        return $list;
+        self::remplacerAssociations('GenreJeu', 'idGenre', $idJeu, $ids);
     }
 
     public static function setEditeurs($idJeu, array $ids) {
+        self::remplacerAssociations('Edite', 'idEditeur', $idJeu, $ids);
+    }
+
+    /**
+     * Remplace les associations d'un jeu dans une table de liaison.
+     * Les identifiants sont convertis en entiers et dédoublonnés.
+     * S'exécute dans la transaction en cours s'il y en a une.
+     */
+    private static function remplacerAssociations($table, $colonne, $idJeu, array $ids) {
         $cnx = connexionPDO();
-        $cnx->beginTransaction();
-        $stmt = $cnx->prepare("DELETE FROM Edite WHERE idJeu = :id");
-        $stmt->bindValue(':id',$idJeu,PDO::PARAM_INT);
-        $stmt->execute();
-        if (!empty($ids)) {
-            $stmt = $cnx->prepare("INSERT INTO Edite(idJeu,idEditeur) VALUES(:jeu,:editeur)");
-            foreach ($ids as $eid) {
-                $stmt->bindValue(':jeu',$idJeu,PDO::PARAM_INT);
-                $stmt->bindValue(':editeur',$eid,PDO::PARAM_INT);
+        $ids = array_unique(array_filter(array_map('intval', $ids), function ($id) { return $id > 0; }));
+
+        $transactionLocale = !$cnx->inTransaction();
+        if ($transactionLocale) $cnx->beginTransaction();
+        try {
+            $stmt = $cnx->prepare("DELETE FROM $table WHERE idJeu = :id");
+            $stmt->bindValue(':id', $idJeu, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $stmt = $cnx->prepare("INSERT INTO $table(idJeu, $colonne) VALUES(:jeu, :autre)");
+            foreach ($ids as $id) {
+                $stmt->bindValue(':jeu', $idJeu, PDO::PARAM_INT);
+                $stmt->bindValue(':autre', $id, PDO::PARAM_INT);
                 $stmt->execute();
             }
+            if ($transactionLocale) $cnx->commit();
+        } catch (Exception $e) {
+            if ($transactionLocale) $cnx->rollBack();
+            throw $e;
         }
-        $cnx->commit();
     }
 }
-
-

@@ -152,7 +152,7 @@ label {
     color: #495057;
 }
 
-input[type=text], input[type=number], input[type=email], select, textarea {
+input[type=text], input[type=number], input[type=email], input[type=password], select, textarea {
     width: 100%;
     padding: 0.6rem;
     margin-top: 0.4rem;
@@ -220,4 +220,64 @@ code, pre {
         margin-bottom: 0.5rem;
         display: block;
     }
+}
+
+/* ===== Messages, actions et fiches ===== */
+.lead {
+    font-size: 1.1rem;
+}
+
+.alert {
+    padding: 0.75rem 1rem;
+    border: 1px solid;
+    border-radius: 6px;
+    margin: 0 0 1rem;
+}
+.alert-success { background: #e8f6ec; border-color: #b7e1c2; color: #1e5631; }
+.alert-error   { background: #fdecea; border-color: #f5c2c0; color: #842029; }
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+.inline-form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+}
+
+table.fiche {
+    max-width: 640px;
+}
+table.fiche th {
+    width: 35%;
+    text-align: left;
+}
+
+fieldset.choix {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+fieldset.choix legend {
+    padding: 0 0.5rem;
+    font-weight: 600;
+}
+fieldset.choix label {
+    display: inline-block;
+    margin: 0 15px 6px 0;
+    font-weight: normal;
+}
+
+blockquote {
+    margin: 0 0 1rem;
+    padding: 0.5rem 1rem;
+    border-left: 4px solid #0d6efd;
+    background: #f8f9fa;
 }

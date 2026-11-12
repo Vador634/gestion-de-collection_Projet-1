@@ -1,27 +1,24 @@
 <?php
 /** @var string|null $erreur */
-
 $pageTitle = "Connexion";
 ?>
 <?php include __DIR__ . "/../partials/header.php"; ?>
 
-<h1>Connexion</h1>
-
-<?php if (isset($erreur)): ?>
-    <p style="color: red;"><?= htmlspecialchars($erreur); ?></p>
+<?php if (!empty($erreur)): ?>
+    <p class="alert alert-error"><?= e($erreur) ?></p>
 <?php endif; ?>
 
-<form method="POST" action="<?= url('Index.php', ['action' => 'login']) ?>">
-    <label>Email :</label>
-    <input type="email" name="email" required><br><br>
+<form method="post" action="<?= e(url('index.php', ['action' => 'login'])) ?>">
+    <?= csrf_field() ?>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" value="<?= e($_POST['email'] ?? '') ?>" autocomplete="email" required>
 
-    <label>Mot de passe :</label>
-    <input type="password" name="motDePasse" required><br><br>
+    <label for="motDePasse">Mot de passe</label>
+    <input type="password" id="motDePasse" name="motDePasse" autocomplete="current-password" required>
 
-    <button type="submit" class="btn">Se connecter</button>
+    <button type="submit" class="btn btn-primary">Se connecter</button>
 </form>
 
-<p><a href="<?= url('Index.php', ['action' => 'register']) ?>">Pas encore inscrit ?</a></p>
-<p><a href="<?= url('Index.php') ?>">Retour à l'accueil</a></p>
+<p>Pas encore de compte ? <a href="<?= e(url('index.php', ['action' => 'register'])) ?>">Inscrivez-vous</a></p>
 
 <?php include __DIR__ . "/../partials/footer.php"; ?>

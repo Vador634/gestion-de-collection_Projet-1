@@ -1,20 +1,16 @@
-<?php
-$pageTitle = "Ajouter un genre";
-?><?php include __DIR__ . "/../partials/header.php"; ?>
-
-<h2>Ajouter un Genre</h2>
+<?php include __DIR__ . "/../partials/header.php"; ?>
 
 <?php if (!empty($erreur)): ?>
-    <p style="color:red"><?= htmlspecialchars($erreur) ?></p>
+    <p class="alert alert-error"><?= e($erreur) ?></p>
 <?php endif; ?>
 
-<form method="post" action="<?= url('Index.php', ['action' => 'ajouterGenre']) ?>">
-    <label>Nom du genre :</label><br>
-    <input type="text" name="nomGenre" required><br><br>
-
-    <button type="submit">Ajouter</button>
+<form method="post" action="<?= e(url('index.php', ['action' => 'ajouterGenre'])) ?>">
+    <?= csrf_field() ?>
+    <label for="nomGenre">Nom du genre</label>
+    <input type="text" id="nomGenre" name="nomGenre" maxlength="100" value="<?= e($nomGenre) ?>" required>
+    <button type="submit" class="btn btn-primary">Ajouter</button>
 </form>
 
-<a href="<?= url('Index.php', ['action' => 'listerGenres']) ?>">Retour à la liste</a>
+<p><a href="<?= e(url('index.php', ['action' => 'listerGenres'])) ?>" class="btn btn-back">← Retour à la liste</a></p>
 
 <?php include __DIR__ . "/../partials/footer.php"; ?>

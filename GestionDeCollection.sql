@@ -18,8 +18,11 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `GestionDeCollection`
+-- Base de données : `gestion_de_collection` (nom utilisé dans config/Database.php)
 --
+
+CREATE DATABASE IF NOT EXISTS `gestion_de_collection` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `gestion_de_collection`;
 
 -- --------------------------------------------------------
 
@@ -469,6 +472,45 @@ ALTER TABLE `JeuLangue`
 ALTER TABLE `JeuModeDeJeu`
   ADD CONSTRAINT `JeuModeDeJeu_ibfk_1` FOREIGN KEY (`idModeDeJeu`) REFERENCES `ModeDeJeu` (`idModeDeJeu`),
   ADD CONSTRAINT `JeuModeDeJeu_ibfk_2` FOREIGN KEY (`idJeu`) REFERENCES `Jeu` (`idJeu`);
+
+--
+-- Données de référence et jeux de démonstration
+--
+
+INSERT INTO `ConditionJeu` (`idCondition`, `libelleCondition`) VALUES
+(1, 'mauvais'), (2, 'bon'), (3, 'excellente'), (4, 'dématérialisé');
+
+INSERT INTO `Rarete` (`idRarete`, `libelleRarete`) VALUES
+(1, 'commun'), (2, 'rare'), (3, 'super rare');
+
+INSERT INTO `Developpeur` (`idDeveloppeur`, `libelleDeveloppeur`) VALUES
+(1, 'Nintendo EPD'), (2, 'FromSoftware'), (3, 'Capcom'), (4, 'Naughty Dog'), (5, 'Ubisoft Montpellier'), (6, 'Rare');
+
+INSERT INTO `Editeur` (`idEditeur`, `libelleEditeur`) VALUES
+(1, 'Nintendo'), (2, 'Bandai Namco'), (3, 'Capcom'), (4, 'Sony Interactive Entertainment'), (5, 'Ubisoft');
+
+INSERT INTO `Console` (`idConsole`, `nomConsole`, `fabricant`) VALUES
+(1, 'Nintendo 64', 'Nintendo'), (2, 'Nintendo Switch', 'Nintendo'), (3, 'PlayStation 2', 'Sony'),
+(4, 'PlayStation 5', 'Sony'), (5, 'GameCube', 'Nintendo'), (6, 'PC', NULL);
+
+INSERT INTO `Genre` (`idGenre`, `libelleGenre`) VALUES
+(1, 'Action-aventure'), (2, 'Plates-formes'), (3, 'RPG'), (4, 'Survival horror'), (5, 'Course');
+
+INSERT INTO `Jeu` (`idJeu`, `titre`, `anneeSortie`, `prixEstime`, `idCondition`, `idRarete`, `idDeveloppeur`) VALUES
+(1, 'The Legend of Zelda: Ocarina of Time', 1998, 45.00, 2, 2, 1),
+(2, 'Elden Ring', 2022, 35.00, 3, 1, 2),
+(3, 'Resident Evil 4', 2005, 25.00, 2, 1, 3),
+(4, 'Rayman 2: The Great Escape', 1999, 20.00, 1, 2, 5);
+
+INSERT INTO `Disponible` (`idConsole`, `idJeu`) VALUES
+(1, 1), (4, 2), (6, 2), (3, 3), (5, 3), (1, 4), (6, 4);
+
+INSERT INTO `GenreJeu` (`idGenre`, `idJeu`) VALUES
+(1, 1), (3, 2), (1, 2), (4, 3), (2, 4);
+
+INSERT INTO `Edite` (`idEditeur`, `idJeu`) VALUES
+(1, 1), (2, 2), (3, 3), (5, 4);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

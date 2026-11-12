@@ -46,11 +46,32 @@ class EditeurDAO {
         return $stmt->execute();
     }
 
+    /**
+     * Supprime l'élément et ses liens avec les jeux (sinon la clé étrangère
+     * bloque la suppression dès qu'un jeu l'utilise).
+     */
     public static function delete($id) {
-        $pdo = connexionPDO();
-        $sql = "DELETE FROM Editeur WHERE idEditeur = :id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':id',$id,PDO::PARAM_INT);
-        return $stmt->execute();
+        $conn = connexionPDO();
+        $conn->beginTransaction();
+        try {
+            foreach (["DELETE FROM Edite WHERE idEditeur = :id", "DELETE FROM Editeur WHERE idEditeur = :id"] as $sql) {
+                $stmt = $conn->prepare($sql);
+                $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+                $stmt->execute();
+            }
+            $conn->commit();
+            return true;
+        } catch (Exception $e) {
+            $conn->rollBack();
+            throw $e;
+        }
+    }
+
+    /** Nombre de jeux qui utilisent cet élément. */
+    public static function countJeux($id) {
+        $stmt = connexionPDO()->prepare("SELECT COUNT(*) FROM Edite WHERE idEditeur = :id");
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
     }
 }

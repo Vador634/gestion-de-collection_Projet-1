@@ -1,22 +1,21 @@
 <?php
 /** @var Utilisateur $utilisateur */
-
-$pageTitle = "Profil";
+/** @var int $nbCollections */
+$pageTitle = "Mon profil";
 ?>
-<?php include_once __DIR__ . '/../partials/header.php'; ?>
+<?php include __DIR__ . '/../partials/header.php'; ?>
 
-<h2>Profil de l'utilisateur</h2>
+<table class="fiche">
+    <tr><th>Pseudo</th><td><?= e($utilisateur->getPseudo()) ?></td></tr>
+    <tr><th>Nom</th><td><?= e($utilisateur->getNom()) ?></td></tr>
+    <tr><th>Prénom</th><td><?= e($utilisateur->getPrenom()) ?></td></tr>
+    <tr><th>Email</th><td><?= e($utilisateur->getEmail()) ?></td></tr>
+    <tr><th>Collections</th><td><?= (int)$nbCollections ?></td></tr>
+</table>
 
-<p><strong>ID :</strong> <?= htmlspecialchars($utilisateur->getId()) ?></p>
-<p><strong>Nom :</strong> <?= htmlspecialchars($utilisateur->getNom()) ?></p>
-<p><strong>Prénom :</strong> <?= htmlspecialchars($utilisateur->getPrenom()) ?></p>
-<p><strong>Pseudo :</strong> <?= htmlspecialchars($utilisateur->getPseudo()) ?></p>
-<p><strong>Email :</strong> <?= htmlspecialchars($utilisateur->getEmail()) ?></p>
+<p class="actions">
+    <a href="<?= e(url('index.php', ['action' => 'listeCollections'])) ?>" class="btn btn-primary">Mes collections</a>
+    <a href="<?= e(url('index.php', ['action' => 'logout'])) ?>" class="btn btn-secondary">Déconnexion</a>
+</p>
 
-<!-- Boutons -->
-<div style="margin-top:20px;">
-    <a href="<?= url('Index.php') ?>" class="btn">Retour à l'accueil</a>
-    <a href="<?= url('Index.php', ['action' => 'logout']) ?>" class="btn" style="margin-left:10px;">Déconnexion</a>
-</div>
-
-<?php include_once __DIR__ . '/../partials/footer.php'; ?>
+<?php include __DIR__ . '/../partials/footer.php'; ?>

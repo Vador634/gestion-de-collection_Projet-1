@@ -68,8 +68,8 @@
 
     <h3>1. Installation et Premier lancement</h3>
     <ol>
-        <li><strong>Prérequis :</strong> Assurez-vous de disposer d'un serveur local (XAMPP, WAMP, Laragon) incluant PHP 8+ et MySQL/MariaDB.</li>
-        <li><strong>Base de données :</strong> Importez le fichier <code>GestionDeCollection.sql</code> dans votre SGBD (ex: phpMyAdmin). Cela créera les tables nécessaires.</li>
+        <li><strong>Prérequis :</strong> Assurez-vous de disposer d'un serveur local (XAMPP, WAMP, Laragon) incluant PHP 7.4+ et MySQL/MariaDB.</li>
+        <li><strong>Base de données :</strong> Importez le fichier <code>GestionDeCollection.sql</code> dans votre SGBD (ex: phpMyAdmin). Cela crée la base, les tables et des données de référence (consoles, genres, éditeurs, développeurs, états, raretés).</li>
         <li><strong>Configuration :</strong> Si vos identifiants MySQL diffèrent de la configuration par défaut (utilisateur: <em>root</em>, mot de passe vide), modifiez le fichier <code>config/Database.php</code>.</li>
         <li><strong>Lancement :</strong> Placez le dossier du projet dans le répertoire web de votre serveur (ex: <code>htdocs</code> ou <code>www</code>) et accédez à l'URL correspondante via votre navigateur. L'URL s'adaptera automatiquement.</li>
     </ol>
@@ -82,7 +82,7 @@
 
     <h3>3. Gérer vos collections et vos jeux</h3>
     <ul>
-        <li><strong>Créer une collection :</strong> Naviguez vers l'onglet "Collections" et cliquez sur le bouton d'ajout. Vous pouvez y renseigner un nom et une note personnelle (ex: "Mes jeux rétro").</li>
+        <li><strong>Créer une collection :</strong> Naviguez vers l'onglet "Mes collections" et cliquez sur le bouton d'ajout. Vous pouvez y renseigner un nom et une note personnelle (ex: "Mes jeux rétro").</li>
         <li><strong>Ajouter un jeu :</strong> Depuis une collection ou l'accueil, vous pouvez renseigner un jeu avec des informations riches : année, prix estimé, et lui lier de multiples entités (consoles, genres, éditeurs).</li>
         <li><strong>Modifier un jeu :</strong> Lors du clic sur "Modifier" depuis la fiche d'un jeu, les informations pré-existantes (y compris les cases à cocher des consoles et genres) sont automatiquement pré-remplies.</li>
         <li><strong>Gestion des tables de référence :</strong> Si une console ou un genre n'apparaît pas lors de la création d'un jeu, utilisez les menus "Consoles", "Genres" ou "Éditeurs" dans la barre de navigation pour les ajouter.</li>
@@ -96,15 +96,15 @@
     <h3>1. Modèle MVC & Routage (Front Controller)</h3>
     <p>Le projet repose sur une architecture stricte de type <strong>M</strong>odèle-<strong>V</strong>ue-<strong>C</strong>ontrôleur, garantissant une séparation parfaite entre la logique métier et l'affichage.</p>
     <ul>
-        <li><strong>Le Front Controller (Index.php) :</strong> Il intercepte 100% des requêtes URL (ex: <code>?action=listeJeux</code>). Il ne contient <strong>aucun code HTML</strong>. Son rôle est de vérifier l'action demandée et d'instancier le contrôleur adéquat. S'il n'y a pas d'action, il appelle le <code>HomeController</code> par défaut.</li>
+        <li><strong>Le Front Controller (index.php) :</strong> Il intercepte toutes les requêtes (ex: <code>?action=listeJeux</code>) et ne contient <strong>aucun code HTML</strong>. Une table de routes associe chaque action à son contrôleur et à ses règles d'accès : connexion obligatoire, paramètres <code>id</code> validés comme entiers, actions de suppression acceptées uniquement en POST. S'il n'y a pas d'action, il appelle le <code>HomeController</code>.</li>
         <li><strong>Les Contrôleurs (ex: JeuController) :</strong> Ils reçoivent les données du routeur, effectuent les vérifications (ex: champs de formulaire vides), demandent les données aux Modèles, et préparent un tableau de variables final avant d'inclure la Vue.</li>
-        <li><strong>Les Vues (ex: /vue/jeu/Liste.php) :</strong> Elles gèrent uniquement le rendu visuel. Aucune requête SQL n'est effectuée ici. Toutes les données injectées sont sécurisées avec <code>htmlspecialchars()</code>.</li>
+        <li><strong>Les Vues (ex: /vue/jeu/Liste.php) :</strong> Elles gèrent uniquement le rendu visuel. Aucune requête SQL n'est effectuée ici. Toutes les données affichées sont échappées avec la fonction <code>e()</code> (<code>htmlspecialchars</code>).</li>
     </ul>
 
     <h3>2. Schéma de Base de Données & Relations</h3>
     <p>La base implémente un système relationnel fort, exploitant massivement les relations <strong>Plusieurs-à-Plusieurs (Many-to-Many)</strong> :</p>
     <ul>
-        <li><strong>Tables Référentielles :</strong> <code>Genre</code>, <code>Console</code>, <code>Editeur</code>, <code>Developpeur</code>, <code>Condition</code>, <code>Rarete</code>.</li>
+        <li><strong>Tables Référentielles :</strong> <code>Genre</code>, <code>Console</code>, <code>Editeur</code>, <code>Developpeur</code>, <code>ConditionJeu</code>, <code>Rarete</code>.</li>
         <li><strong>Tables Centrales :</strong> <code>Jeu</code> et <code>Collection</code>.</li>
         <li><strong>Tables de Jonction (Associatives) :</strong> 
             <ul>
@@ -121,7 +121,10 @@
     <ul>
         <li><strong>Requêtes Préparées :</strong> 100% des requêtes utilisent les requêtes préparées PDO (<code>bindValue</code>) ce qui rend l'application immunisée contre les injections SQL.</li>
         <li><strong>Transactions SQL :</strong> Pour les modifications complexes nécessitant de nettoyer puis de réinsérer des cases à cocher (ex: <code>JeuDAO::setConsoles</code>), nous utilisons des transactions (<code>beginTransaction()</code> et <code>commit()</code>) pour garantir la cohérence des données en cas de panne réseau.</li>
-        <li><strong>Mots de passe :</strong> Utilisation systématique de <code>password_hash()</code> et <code>password_verify()</code>.</li>
+        <li><strong>Mots de passe :</strong> <code>password_hash()</code> / <code>password_verify()</code>, 8 caractères minimum, identifiant de session régénéré à la connexion.</li>
+        <li><strong>Jeton CSRF :</strong> chaque formulaire contient un jeton propre à la session ; une requête POST sans jeton valide est refusée par le routeur.</li>
+        <li><strong>Propriété des collections :</strong> un utilisateur ne peut consulter, modifier ou supprimer que ses propres collections.</li>
+        <li><strong>Suppressions :</strong> elles passent par un bouton (formulaire POST) avec confirmation, jamais par un simple lien.</li>
     </ul>
 </div>
 
@@ -144,7 +147,8 @@
 
     <h3>3. Ergonomie et Navigation Contextuelle</h3>
     <ul>
-        <li><strong>Bouton Retour intelligent :</strong> Ajout systématique du bouton <code>← Retour</code> (classe <code>.btn-back</code>). Il exploite le JavaScript natif (<code>history.back()</code>) afin que l'utilisateur revienne exactement sur la page précédente dans l'état où il l'a laissée (particulièrement utile lors d'ajouts de jeux depuis une collection spécifique).</li>
+        <li><strong>Navigation contextuelle :</strong> chaque page propose un bouton <code>← Retour</code> (classe <code>.btn-back</code>) vers la page logique précédente : un jeu créé depuis une collection y est ajouté directement et l'on revient à cette collection.</li>
+        <li><strong>Messages de confirmation :</strong> après chaque action (ajout, modification, suppression), un message s'affiche en haut de la page suivante.</li>
         <li><strong>Catégorisation des informations :</strong> Lors de l'ajout d'un jeu, les longues listes de cases à cocher (Consoles, Genres, Éditeurs) sont englobées dans des <code>&lt;fieldset&gt;</code> avec leurs légendes claires, séparant logiquement le formulaire en petits blocs digestes.</li>
     </ul>
 </div>

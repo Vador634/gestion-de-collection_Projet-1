@@ -1,28 +1,18 @@
-<?php
-$pageTitle = "Modifier console";
-?>
 <?php include __DIR__ . "/../partials/header.php"; ?>
 
-<h2>Modifier une Console</h2>
-
 <?php if (!empty($erreur)): ?>
-    <p style="color:red"><?= htmlspecialchars($erreur) ?></p>
+    <p class="alert alert-error"><?= e($erreur) ?></p>
 <?php endif; ?>
 
-<?php if ($console): ?>
-<form method="post" action="<?= url('Index.php', ['action' => 'modifierConsole', 'id' => $console->getIdConsole()]) ?>">
-    <label>Nom de la console :</label><br>
-    <input type="text" name="nomConsole" value="<?= htmlspecialchars($console->getNomConsole()) ?>" required><br><br>
-
-    <label>Fabricant :</label><br>
-    <input type="text" name="fabricant" value="<?= htmlspecialchars($console->getFabricant()) ?>" required><br><br>
-
-    <button type="submit">Modifier</button>
+<form method="post" action="<?= e(url('index.php', ['action' => 'modifierConsole', 'id' => $console->getIdConsole()])) ?>">
+    <?= csrf_field() ?>
+    <label for="nomConsole">Nom de la console</label>
+    <input type="text" id="nomConsole" name="nomConsole" maxlength="100" value="<?= e($console->getNomConsole()) ?>" required>
+    <label for="fabricant">Fabricant</label>
+    <input type="text" id="fabricant" name="fabricant" maxlength="100" value="<?= e($console->getFabricant()) ?>" required>
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
 </form>
-<?php else: ?>
-    <p>Console introuvable.</p>
-<?php endif; ?>
 
-<a href="<?= url('Index.php', ['action' => 'listerConsoles']) ?>">Retour à la liste</a>
+<p><a href="<?= e(url('index.php', ['action' => 'detailsConsole', 'id' => $console->getIdConsole()])) ?>" class="btn btn-back">← Retour</a></p>
 
 <?php include __DIR__ . "/../partials/footer.php"; ?>

@@ -1,16 +1,23 @@
-<?php
-$pageTitle = "Détails éditeur";
-?>
+<?php /** @var int $nbJeux nombre de jeux associés */ ?>
 <?php include __DIR__ . "/../partials/header.php"; ?>
 
-<h2>Détails de l'éditeur</h2>
-<?php if ($editeur): ?>
-    <p><strong>Id :</strong> <?= htmlspecialchars($editeur->idEditeur) ?></p>
-    <p><strong>Nom :</strong> <?= htmlspecialchars($editeur->libelleEditeur) ?></p>
-    <p><a href="<?= url('Index.php',['action'=>'modifierEditeur','id'=>$editeur->idEditeur]) ?>">Modifier</a></p>
-    <p><a href="<?= url('Index.php',['action'=>'listerEditeurs']) ?>">Retour à la liste</a></p>
-<?php else: ?>
-    <p>Éditeur introuvable.</p>
-<?php endif; ?>
+<table class="fiche">
+    <tr><th>Nom</th><td><?= e($editeur->libelleEditeur) ?></td></tr>
+    
+    <tr><th>Jeux associés</th><td><?= (int)$nbJeux ?></td></tr>
+</table>
+
+<p class="actions">
+    <a href="<?= e(url('index.php', ['action' => 'modifierEditeur', 'id' => $editeur->idEditeur])) ?>" class="btn btn-secondary btn-sm">Modifier</a>
+    <?php
+        $supprAction = 'supprimerEditeur';
+        $supprParams = ['id' => $editeur->idEditeur];
+        $supprLibelle = 'Supprimer';
+        $supprConfirmation = "Supprimer l'éditeur « " . $editeur->libelleEditeur . " » ?" . ($nbJeux ? " $nbJeux jeu(x) l'utilisent : le lien sera supprimé." : "");
+        include __DIR__ . "/../partials/bouton_supprimer.php";
+    ?>
+</p>
+
+<p><a href="<?= e(url('index.php', ['action' => 'listerEditeurs'])) ?>" class="btn btn-back">← Retour à la liste</a></p>
 
 <?php include __DIR__ . "/../partials/footer.php"; ?>

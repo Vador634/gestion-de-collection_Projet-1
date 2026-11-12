@@ -48,11 +48,32 @@ class GenreDAO {
         return $stmt->execute();
     }
 
+    /**
+     * Supprime l'élément et ses liens avec les jeux (sinon la clé étrangère
+     * bloque la suppression dès qu'un jeu l'utilise).
+     */
     public static function delete($idGenre) {
         $conn = connexionPDO();
-        $sql = "DELETE FROM Genre WHERE idGenre = :id";
-        $stmt = $conn->prepare($sql);
+        $conn->beginTransaction();
+        try {
+            foreach (["DELETE FROM GenreJeu WHERE idGenre = :id", "DELETE FROM Genre WHERE idGenre = :id"] as $sql) {
+                $stmt = $conn->prepare($sql);
+                $stmt->bindValue(":id", $idGenre, PDO::PARAM_INT);
+                $stmt->execute();
+            }
+            $conn->commit();
+            return true;
+        } catch (Exception $e) {
+            $conn->rollBack();
+            throw $e;
+        }
+    }
+
+    /** Nombre de jeux qui utilisent cet élément. */
+    public static function countJeux($idGenre) {
+        $stmt = connexionPDO()->prepare("SELECT COUNT(*) FROM GenreJeu WHERE idGenre = :id");
         $stmt->bindValue(":id", $idGenre, PDO::PARAM_INT);
-        return $stmt->execute();
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
     }
 }

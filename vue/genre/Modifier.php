@@ -1,24 +1,16 @@
-<?php
-$pageTitle = "Modifier un genre";
-?><?php include __DIR__ . "/../partials/header.php"; ?>
-
-<h2>Modifier un Genre</h2>
+<?php include __DIR__ . "/../partials/header.php"; ?>
 
 <?php if (!empty($erreur)): ?>
-    <p style="color:red"><?= htmlspecialchars($erreur) ?></p>
+    <p class="alert alert-error"><?= e($erreur) ?></p>
 <?php endif; ?>
 
-<?php if ($genre): ?>
-<form method="post" action="<?= url('Index.php', ['action' => 'modifierGenre', 'id' => $genre->getIdGenre()]) ?>">
-    <label>Nom du genre :</label><br>
-    <input type="text" name="nomGenre" value="<?= htmlspecialchars($genre->getNomGenre()) ?>" required><br><br>
-
-    <button type="submit">Modifier</button>
+<form method="post" action="<?= e(url('index.php', ['action' => 'modifierGenre', 'id' => $genre->getIdGenre()])) ?>">
+    <?= csrf_field() ?>
+    <label for="nomGenre">Nom du genre</label>
+    <input type="text" id="nomGenre" name="nomGenre" maxlength="100" value="<?= e($genre->getNomGenre()) ?>" required>
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
 </form>
-<?php else: ?>
-    <p>Genre introuvable.</p>
-<?php endif; ?>
 
-<a href="<?= url('Index.php', ['action' => 'listerGenres']) ?>">Retour à la liste</a>
+<p><a href="<?= e(url('index.php', ['action' => 'detailsGenre', 'id' => $genre->getIdGenre()])) ?>" class="btn btn-back">← Retour</a></p>
 
 <?php include __DIR__ . "/../partials/footer.php"; ?>

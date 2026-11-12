@@ -1,40 +1,29 @@
 <?php
 /** @var Jeu[] $jeux */
-/** @var array $consolesParJeu */
-
-$pageTitle = "Liste des jeux";
+/** @var array $consolesParJeu consoles de chaque jeu, préparées par le contrôleur */
 ?>
 <?php include __DIR__ . "/../partials/header.php"; ?>
 
-<h2>Liste des Jeux</h2>
-<ul>
-<?php foreach ($jeux as $jeu): ?>
-     <li>
-         <?= htmlspecialchars($jeu->getTitre()) ?> (<?= htmlspecialchars($jeu->getAnneeSortie()) ?>) - <?= htmlspecialchars($jeu->getPrixEstime()) ?>€
-         <?php
-             // Données déjà préparées par le contrôleur (plus de DAO ici !)
-             $consoles = $consolesParJeu[$jeu->getIdJeu()] ?? [];
-         ?>
-         <?php if (!empty($consoles)): ?>
-             <br><small>Consoles: 
-             <?php
-                 $names = [];
-                 foreach ($consoles as $c):
-                     /** @var Console $c */
-                     $names[] = $c->getNomConsole();
-                 endforeach;
-                 echo htmlspecialchars(implode(', ', $names));
-             ?>
-             </small>
-         <?php endif; ?>
-         <br><a href="<?= url('Index.php', ['action' => 'detailsJeu', 'id' => $jeu->getIdJeu()]) ?>">Détails</a>
-     </li>
-<?php endforeach; ?>
-</ul>
+<p><a href="<?= e(url('index.php', ['action' => 'ajouterJeu'])) ?>" class="btn btn-primary">Ajouter un jeu</a></p>
 
-<div style="margin-top:20px;">
-    <a href="<?= url('Index.php', ['action' => 'ajouterJeu']) ?>" class="btn btn-primary">Ajouter un jeu</a>
-    <a href="<?= url('Index.php') ?>" class="btn btn-secondary">Retour à l'accueil</a>
-</div>
+<?php if (empty($jeux)): ?>
+    <p>Le catalogue est vide.</p>
+<?php else: ?>
+    <table>
+        <thead><tr><th>Titre</th><th>Année</th><th>Consoles</th><th>Prix estimé</th></tr></thead>
+        <tbody>
+        <?php foreach ($jeux as $jeu):
+            $noms = array_map(function ($c) { return $c->getNomConsole(); }, $consolesParJeu[$jeu->getIdJeu()] ?? []);
+        ?>
+            <tr>
+                <td><a href="<?= e(url('index.php', ['action' => 'detailsJeu', 'id' => $jeu->getIdJeu()])) ?>"><?= e($jeu->getTitre()) ?></a></td>
+                <td><?= e($jeu->getAnneeSortie() ?: '—') ?></td>
+                <td><?= $noms ? e(implode(', ', $noms)) : '—' ?></td>
+                <td><?= $jeu->getPrixEstime() !== null ? e(number_format((float)$jeu->getPrixEstime(), 2, ',', ' ')) . ' €' : '—' ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>
 
 <?php include __DIR__ . "/../partials/footer.php"; ?>
