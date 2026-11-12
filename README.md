@@ -78,4 +78,4 @@ Le MCD et le MLD sont disponibles dans le dossier `Documentation/`.
 ## Auteur
 
 **Kilian Carasco** — étudiant en Bachelor Concepteur Développeur d'Applications (EPSI Bordeaux)
-[GitHub](https://github.com/Vador634) · [LinkedIn](https://linkedin.com/in/Kilian-Carasco)
+[GitHub](https://github.com/Vador634) · [LinkedIn](https://www.linkedin.com/in/kilian-carasco-029915399/)
